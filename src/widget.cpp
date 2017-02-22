@@ -11,18 +11,20 @@ Widget::Widget(const char* name, SDL_DisplayMode computer, SDL_Renderer* rendere
     setHeight(m_computer.h/64 + m_computer.h/128);
     setPosX(posX);
     setPosY(posY);
-    setMouseX(0);
-    setMouseY(0);
+    setMouseX(posX);
+    setMouseY(posY);
     setName(name);
     m_movable = true;
     m_widgetChanged = true;
-    setTitleRect(m_width, m_height, m_posX, m_posY);
-    setQuitRect(m_height/2 + m_height/8, m_height/2 + m_height/8, m_posX + m_width - m_height/2 - m_height/8 - (m_height - (m_height/2 + m_height/8))/2, m_posY + (m_height - (m_height/2 + m_height/8))/2);
+    setTitleRect(m_width, m_height, 0, 0);
+    setQuitRect(m_height/2 + m_height/8, m_height/2 + m_height/8, m_width - m_height/2 - m_height/8 - (m_height - (m_height/2 + m_height/8))/2, (m_height - (m_height/2 + m_height/8))/2);
     setWidgetRect(m_width, m_height, m_posX, m_posY);
     setId(id);
 
+    m_surfaceBack = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+    m_textureBack = SDL_CreateTextureFromSurface(m_renderer, m_surfaceBack);
     m_surfaceName = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0, 0, 0, 0);
-    m_headerName = SDL_CreateTextureFromSurface(m_renderer, m_surfaceName);
+    m_textureName = SDL_CreateTextureFromSurface(m_renderer, m_surfaceName);
 /*    if (SDL_WasInit(SDL_SUBSYTEM_MASK)) {
         m_window = SDL_CreateWindow(m_name, m_posX, m_posY, m_width, m_height, SDL_WINDOW_SHOWN | SDL_WINDOW_BORDERLESS);
         m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -184,11 +186,11 @@ void Widget::updateWidgetPosition(int moveX, int moveY) {
     setMouseY(moveY);
     //SDL_SetWindowPosition(m_window, m_posX, m_posY);
     setWidgetRect(m_widget.w, m_widget.h, m_posX, m_posY);
-    setTitleRect(m_title.w, m_title.h, m_posX, m_posY);
+    /*setTitleRect(m_title.w, m_title.h, m_posX, m_posY);
     setQuitRect(m_quit.w, m_quit.h, m_quit.x + x, m_quit.y + y);
     for (int it = 0; it < m_section.size(); it++) {
         m_section[it]->updateSectionPosition(x, y);
-    }
+    }*/
 
     //std::cout << "Move X: " << m_mouseX << " | Move Y: " << m_mouseY << std::endl;
     //std::cout << "Mouse X: " << m_mouseX << " | Mouse Y: " << m_mouseY << std::endl;
@@ -196,18 +198,21 @@ void Widget::updateWidgetPosition(int moveX, int moveY) {
 
 void Widget::updateRenderer() {
     SDL_RenderCopy(m_renderer, m_headerTitle, NULL, NULL);
-    SDL_RenderCopy(m_renderer, m_headerName, NULL, &m_rectName);
+    SDL_RenderCopy(m_renderer, m_textureName, NULL, &m_rectName);
     for (int it = 0; it < m_section.size(); it++) {
         m_section[it]->updateRenderer();
     }
 }
 
-void Widget::copyText() {
-    SDL_RenderCopy(m_renderer, m_headerName, NULL, &m_rectName);
+void Widget::drawDisplay() {
+    SDL_RenderCopy(m_renderer, m_textureBack, NULL, &m_widget);
+    SDL_RenderCopy(m_renderer, m_textureName, NULL, &m_rectName);
 }
 
-void Widget::drawDisplay(SDL_Surface* background) {
-    int pitch = m_computer.w/512;
+void Widget::updateDisplay() {
+    SDL_FreeSurface(m_surfaceBack);
+    m_surfaceBack = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+/*    int pitch = m_computer.w/512;
     Uint8 value = 0;
     for (int i = pitch; i > 0; i--) {
         SDL_Rect m_shader;
@@ -216,28 +221,31 @@ void Widget::drawDisplay(SDL_Surface* background) {
         m_shader.x = m_title.x - i;
         m_shader.y = m_title.y - i;
         value += 120/pitch;
-        SDL_FillRect(background, &m_shader, SDL_MapRGBA(background->format, 0, 0, 0, value));
-    }
+        SDL_FillRect(m_surfaceBack, &m_shader, SDL_MapRGBA(m_surfaceBack->format, 0, 0, 0, value));
+    }*/
 
-    SDL_FillRect(background, &m_title, SDL_MapRGBA(background->format, 20, 80, 160, 255));
-    SDL_FillRect(background, &m_quit, SDL_MapRGBA(background->format, 255, 255, 255, 255));
+    SDL_FillRect(m_surfaceBack, &m_title, SDL_MapRGBA(m_surfaceBack->format, 20, 80, 160, 255));
+    SDL_FillRect(m_surfaceBack, &m_quit, SDL_MapRGBA(m_surfaceBack->format, 255, 255, 255, 255));
 
     for (int it = 0; it < m_section.size(); it++) {
-        m_section[it]->drawDisplay(background);
+        m_section[it]->drawDisplay(m_surfaceBack);
     }
 
-    SDL_Color white = {0, 0, 0, 0};
+    SDL_DestroyTexture(m_textureBack);
+    m_textureBack = SDL_CreateTextureFromSurface(m_renderer, m_surfaceBack);
+
+    SDL_Color white = {0, 0, 0, 255};
     m_rectName.w = m_title.w/64;
     m_rectName.h = m_title.h - m_title.h/4;
-    m_rectName.x = m_title.x + m_rectName.w;
-    m_rectName.y = m_title.y - m_rectName.h/16;
+    m_rectName.x = m_posX + m_rectName.w;
+    m_rectName.y = m_posY - m_rectName.h/16;
 
     TTF_Font* roboto = TTF_OpenFont("../../resources/Roboto-Regular.ttf", m_rectName.h);
     SDL_FreeSurface(m_surfaceName);
     m_surfaceName = TTF_RenderText_Blended(roboto, m_name, white);
-    SDL_DestroyTexture(m_headerName);
-    m_headerName = SDL_CreateTextureFromSurface(m_renderer, m_surfaceName);
-    SDL_QueryTexture(m_headerName, NULL, NULL, &m_rectName.w, &m_rectName.h);
+    SDL_DestroyTexture(m_textureName);
+    m_textureName = SDL_CreateTextureFromSurface(m_renderer, m_surfaceName);
+    SDL_QueryTexture(m_textureName, NULL, NULL, &m_rectName.w, &m_rectName.h);
     TTF_CloseFont(roboto);
 }
 /*
@@ -270,6 +278,7 @@ void Widget::updateWidget() {
             m_section[it]->setOffset(m_section[it-1]->getHeight() + m_section[it-1]->getOffset());
     }
     setHeight(height);
+    m_widget.h = m_height;
 }
 
 void Widget::setCallBackCode(int error) {
@@ -297,12 +306,10 @@ void Widget::eventWatch(SDL_Event event) {
             y = event.motion.y;
             if (SDL_GetMouseState(0, 0) & SDL_BUTTON_LMASK) {
                 updateWidgetPosition(x, y);
-                //SDL_CaptureMouse(SDL_TRUE);
+                // Adding mutex to delete multi moving widget
                 setCallBackCode(1);
             }
         }
-        if (!(SDL_GetMouseState(0, 0) & SDL_BUTTON_LMASK))
-            SDL_CaptureMouse(SDL_FALSE);
     }
     std::cout << getName() << std::endl;
 }

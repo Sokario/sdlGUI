@@ -46,8 +46,10 @@ public:
     void checkTitle(int x, int y);
     void updateWidgetPosition(int x, int y);
     void updateRenderer();
-    void copyText();
-    void drawDisplay(SDL_Surface* background);
+    void drawDisplay();
+    SDL_Surface* getSurfaceDisplay();
+    SDL_Texture* getTextureDisplay();
+    void updateDisplay();
     void clearWidget();
     void drawWidget();
     void updateWidget();
@@ -77,11 +79,13 @@ private:
     bool m_widgetChanged;
 
     SDL_Texture* m_headerTitle;
+
+    int m_pitch;
+    SDL_Surface* m_surfaceBack;
+    SDL_Texture* m_textureBack;
     SDL_Surface* m_surfaceName;
-    SDL_Texture* m_headerName;
-    SDL_Texture* m_headerQuit;
+    SDL_Texture* m_textureName;
     SDL_Rect m_rectName;
-    SDL_Rect m_rectQuit;
 };
 
 #endif //SDLGUI_WIDGET_H

@@ -49,11 +49,11 @@ int main() {
     section1_3->addButton("Button 4");
     section1_3->addButton("Button 5");
 
-    Widget* widget2 = window.addWidget("Widget 2", window.getWidth()/4, window.getHeight()/4);
+/*    Widget* widget2 = window.addWidget("Widget 2", window.getWidth()/4, window.getHeight()/4);*/
 
     widget0->updateWidget();
     widget1->updateWidget();
-    widget2->updateWidget();
+//    widget2->updateWidget();
 
 //    std::cout << widget1_1->getTitleRect()->h << std::endl;
 
