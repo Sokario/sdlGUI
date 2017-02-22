@@ -122,6 +122,13 @@ void Section::drawSection() {
     SDL_RenderPresent(m_renderer);*/
 }
 
+void Section::updateSectionPosition(int x, int y) {
+    m_section.w = m_section.w;
+    m_section.h = m_section.h;
+    m_section.x = m_section.x + x;
+    m_section.y = m_section.y + y;
+}
+
 void Section::updateRenderer() {
 
 }

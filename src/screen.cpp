@@ -60,6 +60,7 @@ SDL_Rect* Screen::getTitleRect() {
 void Screen::setName(const char* name) {
     m_name = name;
 }
+
 const char* Screen::getName() {
     return m_name;
 }

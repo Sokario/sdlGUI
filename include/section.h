@@ -27,6 +27,7 @@ public:
 
     void drawDisplay(SDL_Surface* background);
     void drawSection();
+    void updateSectionPosition(int x, int y);
     void updateRenderer();
     void updateSection();
     ~Section();

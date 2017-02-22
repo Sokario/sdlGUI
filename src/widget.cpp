@@ -175,14 +175,20 @@ void Widget::checkTitle(int x, int y) {
 
 void Widget::updateWidgetPosition(int moveX, int moveY) {
     //std::cout << "Delta X: " << moveX - m_mouseX << " | Delta Y: " << moveY - m_mouseY << std::endl;
-    setPosX(m_posX + moveX - m_mouseX);
-    setPosY(m_posY + moveY - m_mouseY);
-    //setMouseX(moveX);
-    //setMouseY(moveY);
+    int x = moveX - m_mouseX, y = moveY - m_mouseY;
+//    int x = moveX, y = moveY;
+
+    setPosX(m_posX + x);
+    setPosY(m_posY + y);
+    setMouseX(moveX);
+    setMouseY(moveY);
     //SDL_SetWindowPosition(m_window, m_posX, m_posY);
     setWidgetRect(m_widget.w, m_widget.h, m_posX, m_posY);
     setTitleRect(m_title.w, m_title.h, m_posX, m_posY);
-    setQuitRect(m_quit.w, m_quit.h, m_quit.x + moveX - m_mouseX, m_quit.y + moveY - m_mouseY);
+    setQuitRect(m_quit.w, m_quit.h, m_quit.x + x, m_quit.y + y);
+    for (int it = 0; it < m_section.size(); it++) {
+        m_section[it]->updateSectionPosition(x, y);
+    }
 
     //std::cout << "Move X: " << m_mouseX << " | Move Y: " << m_mouseY << std::endl;
     //std::cout << "Mouse X: " << m_mouseX << " | Mouse Y: " << m_mouseY << std::endl;

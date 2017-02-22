@@ -64,7 +64,7 @@ int main() {
     while (!done) {
         while (SDL_PollEvent(&event)) {
 
-            //window.computeEvent(event);
+            window.computeEvent(event);
             if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     printf("quit\n");
