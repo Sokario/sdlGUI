@@ -201,8 +201,21 @@ void Widget::copyText() {
 }
 
 void Widget::drawDisplay(SDL_Surface* background) {
+    int pitch = m_computer.w/512;
+    Uint8 value = 0;
+    for (int i = pitch; i > 0; i--) {
+        SDL_Rect m_shader;
+        m_shader.w = m_title.w + 2*i;
+        m_shader.h = m_height + 2*i;
+        m_shader.x = m_title.x - i;
+        m_shader.y = m_title.y - i;
+        value += 120/pitch;
+        SDL_FillRect(background, &m_shader, SDL_MapRGBA(background->format, 0, 0, 0, value));
+    }
+
     SDL_FillRect(background, &m_title, SDL_MapRGBA(background->format, 20, 80, 160, 255));
     SDL_FillRect(background, &m_quit, SDL_MapRGBA(background->format, 255, 255, 255, 255));
+
     for (int it = 0; it < m_section.size(); it++) {
         m_section[it]->drawDisplay(background);
     }
@@ -220,45 +233,6 @@ void Widget::drawDisplay(SDL_Surface* background) {
     m_headerName = SDL_CreateTextureFromSurface(m_renderer, m_surfaceName);
     SDL_QueryTexture(m_headerName, NULL, NULL, &m_rectName.w, &m_rectName.h);
     TTF_CloseFont(roboto);
-
-//    SDL_RenderCopy(m_renderer, m_headerName, NULL, &m_rectName);
-
-//    SDL_RenderPresent(m_renderer);
-
-/*
-    SDL_SetRenderDrawColor(m_renderer, 20, 80, 160, 255);
-    SDL_RenderFillRect(m_renderer, &m_title);
-//    Uint8 val = 0;
-//    for (int i = m_height/2 - (m_height/4 + m_height/16); i >= 0; i--) {
-//        SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, val);
-//        SDL_RenderDrawLine(m_renderer, 0, m_title.h - i, m_title.w, m_title.h - i);
-//        val += 4 * m_title.h / (m_height / 2 - (m_height / 4 + m_height / 16));
-//    }
-
-//    if (m_quitB)
-//        SDL_SetRenderDrawColor(m_renderer, 240, 20, 0, 255);
-//    else
-    SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
-    SDL_RenderFillRect(m_renderer, &m_quit);
-
-    SDL_SetRenderDrawColor(m_renderer, 20, 20, 20, 255);
-    SDL_RenderDrawLine(m_renderer, m_quit.x + m_quit.w/4, m_quit.y + m_quit.h/4, m_quit.x + m_quit.w - m_quit.w/4, m_quit.y + m_quit.h - m_quit.h/4);
-    SDL_RenderDrawLine(m_renderer, m_quit.x + m_quit.w - m_quit.w/4, m_quit.y + m_quit.h/4, m_quit.x + m_quit.w/4, m_quit.y + m_quit.h - m_quit.h/4);
-
-    SDL_Rect title;
-    SDL_Color white = {255, 255, 255, 0};
-    title.w = m_title.w/64;
-    title.h = m_title.h - m_title.h/4 - m_title.h/8;
-    title.x = m_title.x + title.w;
-    title.y = m_title.y + title.h/4 - title.h/8;
-
-    TTF_Font* roboto = TTF_OpenFont("../../resources/Roboto-Regular.ttf", title.h);
-    SDL_Surface* surface = TTF_RenderText_Blended(roboto, m_name, white);
-    SDL_Texture* message = SDL_CreateTextureFromSurface(m_renderer, surface);
-    SDL_QueryTexture(message, NULL, NULL, &title.w, &title.h);
-    SDL_RenderCopy(m_renderer, message, NULL, &title);
-
-    SDL_RenderPresent(m_renderer);*/
 }
 /*
 void Widget::clearWidget() {

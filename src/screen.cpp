@@ -1,6 +1,7 @@
 //
 // Created by logout on 07/02/17.
 //
+#include <SDL_video.h>
 #include "../include/screen.h"
 
 Screen::Screen(const char* name, int width, int height) {
@@ -80,11 +81,11 @@ void Screen::updateRenderer() {
 
 void Screen::updateDisplay() {
     SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(m_renderer, 40, 40, 40, 255);
+    SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
     SDL_RenderClear(m_renderer);
 
     SDL_FreeSurface(m_background);
-    m_background = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0, 0, 0, 0);
+    m_background = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
     SDL_FillRect(m_background, NULL, SDL_MapRGBA(m_background->format, 255, 255, 255, 255));
     SDL_FillRect(m_background, &m_title, SDL_MapRGBA(m_background->format, 255, 255, 255, 255));
     drawDisplay();

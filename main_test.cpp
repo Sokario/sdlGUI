@@ -51,9 +51,9 @@ int main() {
 
     Widget* widget2 = window.addWidget("Widget 2", window.getWidth()/4, window.getHeight()/4);
 
-//    widget0->drawWidget();
-//    widget1->drawWidget();
-//    widget2->drawWidget();
+    widget0->updateWidget();
+    widget1->updateWidget();
+    widget2->updateWidget();
 
 //    std::cout << widget1_1->getTitleRect()->h << std::endl;
 
@@ -72,7 +72,7 @@ int main() {
                 }
             }
         }
-        std::cout << "Ittération: " << cpt++ << std::endl;
+        //std::cout << "Ittération: " << cpt++ << std::endl;
         window.updateDisplay();
         SDL_Delay(1);
     }
