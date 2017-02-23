@@ -83,14 +83,14 @@ void Screen::updateRenderer() {
 
 void Screen::updateDisplay() {
     SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderClear(m_renderer);
 
     SDL_FreeSurface(m_background);
     m_background = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
-    SDL_SetSurfaceBlendMode(m_background, SDL_BLENDMODE_NONE);
-    SDL_SetTextureBlendMode(m_textureBack, SDL_BLENDMODE_NONE);
-    SDL_FillRect(m_background, NULL, SDL_MapRGBA(m_background->format, 0, 100, 255, 255));
+    //SDL_SetSurfaceBlendMode(m_background, SDL_BLENDMODE_NONE);
+    //SDL_SetTextureBlendMode(m_textureBack, SDL_BLENDMODE_NONE);
+    SDL_FillRect(m_background, NULL, SDL_MapRGBA(m_background->format, 255, 255, 255, 255));
     SDL_FillRect(m_background, &m_title, SDL_MapRGBA(m_background->format, 255, 255, 255, 255));
     drawDisplay();
     for (int it = 0; it < m_widget.size(); it++) {
@@ -147,14 +147,14 @@ void Screen::callBackEvent(Widget *widget) {
 //    std::cout << "Widget: " << widget->getName() << " | Error code: " << widget->getErrorCode() << std::endl;
     switch(widget->getCallBackCode()){
         case 0:
-            std::cout << "No error: " << widget->getName() << std::endl;
+            SDL_Log("Nothing code from %s", widget->getName());
             break;
         case 1:
-            std::cout << "Display code: " << widget->getName() << std::endl;
+            SDL_Log("Display code from %s", widget->getName());
             break;
 
         default:
-            std::cout << "Error Unknown code from " << widget->getName() << " : " << widget->getCallBackCode() << std::endl;
+            SDL_Log("Error Unknown code from %s", widget->getName());
             break;
     }
 }

@@ -7,6 +7,7 @@
 Widget::Widget(const char* name, SDL_DisplayMode computer, SDL_Renderer* renderer, int posX, int posY, int id) {
     m_computer = computer;
     m_renderer = renderer;
+    m_pitch = m_computer.w/512;
     setWidth(m_computer.w/4 - m_computer.w/16);
     setHeight(m_computer.h/64 + m_computer.h/128);
     setPosX(posX);
@@ -16,9 +17,9 @@ Widget::Widget(const char* name, SDL_DisplayMode computer, SDL_Renderer* rendere
     setName(name);
     m_moving = false;
     m_widgetChanged = true;
-    setTitleRect(m_width, m_height, 0, 0);
-    setQuitRect(m_height/2 + m_height/8, m_height/2 + m_height/8, m_width - m_height/2 - m_height/8 - (m_height - (m_height/2 + m_height/8))/2, (m_height - (m_height/2 + m_height/8))/2);
-    setWidgetRect(m_width, m_height, m_posX, m_posY);
+    setTitleRect(m_width, m_height, m_pitch, m_pitch);
+    setQuitRect(m_height/2 + m_height/8, m_height/2 + m_height/8, m_pitch + m_width - m_height/2 - m_height/8 - (m_height - (m_height/2 + m_height/8))/2, m_pitch + (m_height - (m_height/2 + m_height/8))/2);
+    setWidgetRect(m_width + 2*m_pitch, m_height + 2*m_pitch, m_posX - m_pitch, m_posY - m_pitch);
     setId(id);
 
     m_surfaceBack = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
@@ -211,18 +212,18 @@ void Widget::drawDisplay() {
 
 void Widget::updateDisplay() {
     SDL_FreeSurface(m_surfaceBack);
-    m_surfaceBack = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
-/*    int pitch = m_computer.w/512;
+    m_surfaceBack = SDL_CreateRGBSurface(0, m_width + 2*m_pitch, m_height + 2*m_pitch, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+
     Uint8 value = 0;
-    for (int i = pitch; i > 0; i--) {
-        SDL_Rect m_shader;
-        m_shader.w = m_title.w + 2*i;
-        m_shader.h = m_height + 2*i;
-        m_shader.x = m_title.x - i;
-        m_shader.y = m_title.y - i;
-        value += 120/pitch;
+    SDL_Rect m_shader;
+    for (int i = 0; i < m_pitch; i++) {
+        m_shader.w = m_widget.w - 2*i;
+        m_shader.h = m_widget.h - 2*i;
+        m_shader.x = i;
+        m_shader.y = i;
+        value += 120/m_pitch;
         SDL_FillRect(m_surfaceBack, &m_shader, SDL_MapRGBA(m_surfaceBack->format, 0, 0, 0, value));
-    }*/
+    }
 
     SDL_FillRect(m_surfaceBack, &m_title, SDL_MapRGBA(m_surfaceBack->format, 20, 80, 160, 255));
     SDL_FillRect(m_surfaceBack, &m_quit, SDL_MapRGBA(m_surfaceBack->format, 255, 255, 255, 255));
@@ -278,7 +279,7 @@ void Widget::updateWidget() {
             m_section[it]->setOffset(m_section[it-1]->getHeight() + m_section[it-1]->getOffset());
     }
     setHeight(height);
-    m_widget.h = m_height;
+    m_widget.h = m_height + 2*m_pitch;
 }
 
 bool Widget::isMoving() {
