@@ -235,11 +235,11 @@ void Widget::updateDisplay() {
     SDL_DestroyTexture(m_textureBack);
     m_textureBack = SDL_CreateTextureFromSurface(m_renderer, m_surfaceBack);
 
-    SDL_Color white = {0, 0, 0, 255};
+    SDL_Color white = {255, 255, 255, 255};
     m_rectName.w = m_title.w/64;
     m_rectName.h = m_title.h - m_title.h/4;
-    m_rectName.x = m_posX + m_rectName.w;
-    m_rectName.y = m_posY - m_rectName.h/16;
+    m_rectName.x = m_widget.x + m_title.x + m_rectName.w;
+    m_rectName.y = m_widget.y + m_title.y - m_rectName.h/16;
 
     TTF_Font* roboto = TTF_OpenFont("../../resources/Roboto-Regular.ttf", m_rectName.h);
     SDL_FreeSurface(m_surfaceName);

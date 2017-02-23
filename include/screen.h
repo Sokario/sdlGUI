@@ -44,7 +44,7 @@ private:
     int m_height;
     const char* m_name;
 
-    SDL_Surface* m_background;
+    SDL_Surface* m_surfaceBack;
     SDL_Texture* m_textureBack;
     SDL_Surface* m_surfaceName;
     SDL_Texture* m_textureName;
