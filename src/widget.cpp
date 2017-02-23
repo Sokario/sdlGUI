@@ -14,7 +14,7 @@ Widget::Widget(const char* name, SDL_DisplayMode computer, SDL_Renderer* rendere
     setMouseX(posX);
     setMouseY(posY);
     setName(name);
-    m_movable = true;
+    m_moving = false;
     m_widgetChanged = true;
     setTitleRect(m_width, m_height, 0, 0);
     setQuitRect(m_height/2 + m_height/8, m_height/2 + m_height/8, m_width - m_height/2 - m_height/8 - (m_height - (m_height/2 + m_height/8))/2, (m_height - (m_height/2 + m_height/8))/2);
@@ -281,6 +281,10 @@ void Widget::updateWidget() {
     m_widget.h = m_height;
 }
 
+bool Widget::isMoving() {
+    return m_moving;
+}
+
 void Widget::setCallBackCode(int error) {
     m_callback = error;
 }
@@ -290,7 +294,7 @@ int Widget::getCallBackCode() {
 }
 
 bool Widget::getFocus(int x, int y) {
-    return (x >= m_widget.x) && (x <= m_widget.x + m_widget.w) && (y >= m_widget.y) && (y <= m_widget.y + m_widget.h + m_height);
+    return (x >= m_widget.x) && (x <= m_widget.x + m_widget.w) && (y >= m_widget.y) && (y <= m_widget.y + m_widget.h);
 }
 
 void Widget::eventWatch(SDL_Event event) {
@@ -301,14 +305,14 @@ void Widget::eventWatch(SDL_Event event) {
         setMouseX(event.button.x);
         setMouseY(event.button.y);
     } else if (event.type == SDL_MOUSEMOTION) {
-        if (m_movable) {
-            x = event.motion.x;
-            y = event.motion.y;
-            if (SDL_GetMouseState(0, 0) & SDL_BUTTON_LMASK) {
-                updateWidgetPosition(x, y);
-                // Adding mutex to delete multi moving widget
-                setCallBackCode(1);
-            }
+        x = event.motion.x;
+        y = event.motion.y;
+        if (SDL_GetMouseState(0, 0) & SDL_BUTTON_LMASK) {
+            m_moving = true;
+            updateWidgetPosition(x, y);
+            setCallBackCode(1);
+        } else {
+            m_moving = false;
         }
     }
     std::cout << getName() << std::endl;

@@ -54,6 +54,7 @@ public:
     void drawWidget();
     void updateWidget();
 
+    bool isMoving();
     void setCallBackCode(int error);
     int getCallBackCode();
     bool getFocus(int x, int y);
@@ -71,7 +72,7 @@ private:
     int m_mouseX;
     int m_mouseY;
     const char* m_name;
-    bool m_movable;
+    bool m_moving;
     std::unordered_map <int, Section*> m_section;
     SDL_DisplayMode m_computer;
     int m_id;

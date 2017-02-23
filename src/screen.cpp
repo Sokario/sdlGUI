@@ -161,11 +161,26 @@ void Screen::callBackEvent(Widget *widget) {
 
 void Screen::computeEvent(SDL_Event event) {
     if (event.window.windowID == getWindowId()) {
+        Widget* widget;
+        int indice = 0, cpt = 0;
         for (int it = 0; it < m_widget.size(); it++)
             if (m_widget[it]->getFocus(event.button.x, event.button.y)) {
-                m_widget[it]->eventWatch(event);
-                callBackEvent(m_widget[it]);
+                if (cpt == 0) {
+                    widget = m_widget[it];
+                    indice = it;
+                } else if (!widget->isMoving()) {
+                    widget = m_widget[it];
+                    indice = it;
+                }
+                cpt++;
             }
+
+        if (cpt > 0) {
+            widget->eventWatch(event);
+            callBackEvent(widget);
+            m_widget.erase(m_widget.begin() + indice);
+            m_widget.push_back(widget);
+        }
     }
 }
 
