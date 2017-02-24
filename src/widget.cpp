@@ -25,6 +25,8 @@ Widget::Widget(const char* name, SDL_DisplayMode computer, SDL_Renderer* rendere
 
     m_surfaceBack = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
     m_textureBack = SDL_CreateTextureFromSurface(m_renderer, m_surfaceBack);
+    m_surfaceQuit = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+    m_textureQuit = SDL_CreateTextureFromSurface(m_renderer, m_surfaceQuit);
     m_surfaceName = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0, 0, 0, 0);
     m_textureName = SDL_CreateTextureFromSurface(m_renderer, m_surfaceName);
 /*    if (SDL_WasInit(SDL_SUBSYTEM_MASK)) {
@@ -242,8 +244,10 @@ void Widget::updateDisplay() {
     m_rectQuit.h = m_quit.h/2;
     m_rectQuit.x = m_widget.x + m_quit.x + m_quit.w/2 - m_rectQuit.w/2;
     m_rectQuit.y = m_widget.y + m_quit.y + m_quit.h/2 - m_rectQuit.h/2;
+    SDL_FreeSurface(m_surfaceQuit);
     m_surfaceQuit = SDL_LoadBMP("../../resources/icon/close.bmp");
     SDL_SetColorKey(m_surfaceQuit, SDL_TRUE, SDL_MapRGBA(m_surfaceQuit->format, 255, 255, 255, 0));
+    SDL_DestroyTexture(m_textureQuit);
     m_textureQuit = SDL_CreateTextureFromSurface(m_renderer, m_surfaceQuit);
 
     SDL_Color white = {255, 255, 255, 255};

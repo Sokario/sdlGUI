@@ -27,6 +27,8 @@ Screen::Screen(const char* name, int width, int height) {
         //m_textureBack = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, m_width, m_height);
         m_surfaceBack = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
         m_textureBack = SDL_CreateTextureFromSurface(m_renderer, m_surfaceBack);
+        m_surfaceQuit = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+        m_textureQuit = SDL_CreateTextureFromSurface(m_renderer, m_surfaceQuit);
         m_surfaceName = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0, 0, 0, 0);
         m_textureName = SDL_CreateTextureFromSurface(m_renderer, m_surfaceName);
         updateDisplay();
@@ -119,7 +121,6 @@ void Screen::updateDisplay() {
         value += 120/m_pitch;
         SDL_FillRect(m_surfaceBack, &m_shader, SDL_MapRGBA(m_surfaceBack->format, 40, 40, 40, value));
     }
-    std::cout << "---- " << getName() << ": Pitch =  " << m_pitch << std::endl;
 
 //    m_shader.w = m_title.w;
 //    m_shader.h = 10;
@@ -135,8 +136,10 @@ void Screen::updateDisplay() {
     m_rectQuit.h = m_quit.h/2;
     m_rectQuit.x = m_quit.x + m_quit.w/2 - m_rectQuit.w/2;
     m_rectQuit.y = m_quit.y + m_quit.h/2 - m_rectQuit.h/2;
+    SDL_FreeSurface(m_surfaceQuit);
     m_surfaceQuit = SDL_LoadBMP("../../resources/icon/close.bmp");
     SDL_SetColorKey(m_surfaceQuit, SDL_TRUE, SDL_MapRGBA(m_surfaceQuit->format, 255, 255, 255, 0));
+    SDL_DestroyTexture(m_textureQuit);
     m_textureQuit = SDL_CreateTextureFromSurface(m_renderer, m_surfaceQuit);
 
     drawDisplay();
