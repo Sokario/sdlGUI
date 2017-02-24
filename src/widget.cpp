@@ -8,6 +8,7 @@ Widget::Widget(const char* name, SDL_DisplayMode computer, SDL_Renderer* rendere
     m_computer = computer;
     m_renderer = renderer;
     m_pitch = m_computer.w/512;
+    m_quitButton = false;
     setWidth(m_computer.w/4 - m_computer.w/16);
     setHeight(m_computer.h/64 + m_computer.h/128);
     setPosX(posX);
@@ -17,9 +18,9 @@ Widget::Widget(const char* name, SDL_DisplayMode computer, SDL_Renderer* rendere
     setName(name);
     m_moving = false;
     m_widgetChanged = true;
+    setWidgetRect(m_width + 2*m_pitch, m_height + 2*m_pitch, m_posX - m_pitch, m_posY - m_pitch);
     setTitleRect(m_width, m_height, m_pitch, m_pitch);
     setQuitRect(m_height/2 + m_height/8, m_height/2 + m_height/8, m_pitch + m_width - m_height/2 - m_height/8 - (m_height - (m_height/2 + m_height/8))/2, m_pitch + (m_height - (m_height/2 + m_height/8))/2);
-    setWidgetRect(m_width + 2*m_pitch, m_height + 2*m_pitch, m_posX - m_pitch, m_posY - m_pitch);
     setId(id);
 
     m_surfaceBack = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
@@ -207,6 +208,7 @@ void Widget::updateRenderer() {
 
 void Widget::drawDisplay() {
     SDL_RenderCopy(m_renderer, m_textureBack, NULL, &m_widget);
+    SDL_RenderCopy(m_renderer, m_textureQuit, NULL, &m_rectQuit);
     SDL_RenderCopy(m_renderer, m_textureName, NULL, &m_rectName);
 }
 
@@ -222,11 +224,12 @@ void Widget::updateDisplay() {
         m_shader.x = i;
         m_shader.y = i;
         value += 120/m_pitch;
-        SDL_FillRect(m_surfaceBack, &m_shader, SDL_MapRGBA(m_surfaceBack->format, 0, 0, 0, value));
+        SDL_FillRect(m_surfaceBack, &m_shader, SDL_MapRGBA(m_surfaceBack->format, 40, 40, 40, value));
     }
 
     SDL_FillRect(m_surfaceBack, &m_title, SDL_MapRGBA(m_surfaceBack->format, 20, 80, 160, 255));
-    SDL_FillRect(m_surfaceBack, &m_quit, SDL_MapRGBA(m_surfaceBack->format, 255, 255, 255, 255));
+    if (m_quitButton)
+        SDL_FillRect(m_surfaceBack, &m_quit, SDL_MapRGBA(m_surfaceBack->format, 255, 255, 255, 255));
 
     for (int it = 0; it < m_section.size(); it++) {
         m_section[it]->drawDisplay(m_surfaceBack);
@@ -235,12 +238,19 @@ void Widget::updateDisplay() {
     SDL_DestroyTexture(m_textureBack);
     m_textureBack = SDL_CreateTextureFromSurface(m_renderer, m_surfaceBack);
 
+    m_rectQuit.w = m_quit.w/2;
+    m_rectQuit.h = m_quit.h/2;
+    m_rectQuit.x = m_widget.x + m_quit.x + m_quit.w/2 - m_rectQuit.w/2;
+    m_rectQuit.y = m_widget.y + m_quit.y + m_quit.h/2 - m_rectQuit.h/2;
+    m_surfaceQuit = SDL_LoadBMP("../../resources/icon/close.bmp");
+    SDL_SetColorKey(m_surfaceQuit, SDL_TRUE, SDL_MapRGBA(m_surfaceQuit->format, 255, 255, 255, 0));
+    m_textureQuit = SDL_CreateTextureFromSurface(m_renderer, m_surfaceQuit);
+
     SDL_Color white = {255, 255, 255, 255};
     m_rectName.w = m_title.w/64;
     m_rectName.h = m_title.h - m_title.h/4;
     m_rectName.x = m_widget.x + m_title.x + m_rectName.w;
     m_rectName.y = m_widget.y + m_title.y - m_rectName.h/16;
-
     TTF_Font* roboto = TTF_OpenFont("../../resources/Roboto-Regular.ttf", m_rectName.h);
     SDL_FreeSurface(m_surfaceName);
     m_surfaceName = TTF_RenderText_Blended(roboto, m_name, white);
@@ -269,6 +279,7 @@ void Widget::drawWidget() {
 
 void Widget::updateWidget() {
     int height = m_title.h;
+    std::cout << "---- " << getName() << ": Pitch =  " << m_pitch << std::endl;
     for (int it = 0; it < m_section.size(); it++) {
         m_section[it]->updateSection();
         height += m_section[it]->getHeight();
@@ -286,6 +297,10 @@ bool Widget::isMoving() {
     return m_moving;
 }
 
+void Widget::isOnQuit(int x, int y) {
+    m_quitButton = (x >= m_quit.x) && (x <= m_quit.x + m_quit.w) && (y >= m_quit.y) && (y <= m_quit.y + m_quit.h);
+}
+
 void Widget::setCallBackCode(int error) {
     m_callback = error;
 }
@@ -301,7 +316,7 @@ bool Widget::getFocus(int x, int y) {
 void Widget::eventWatch(SDL_Event event) {
     int x = 0, y = 0;
     setCallBackCode(0);
-//    checkTitle(event.button.x, event.button.y);
+    isOnQuit(event.button.x - m_widget.x, event.button.y - m_widget.y);
     if (event.type == SDL_MOUSEBUTTONDOWN) {
         setMouseX(event.button.x);
         setMouseY(event.button.y);

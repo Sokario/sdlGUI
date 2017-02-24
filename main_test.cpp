@@ -67,7 +67,7 @@ int main() {
             window.computeEvent(event);
             if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
-                    printf("quit\n");
+                    printf("Key quit\n");
                     done = true;
                 }
             }

@@ -9,9 +9,12 @@ Screen::Screen(const char* name, int width, int height) {
     setWidth(width);
     setHeight(height);
     setName(name);
+    m_quitButton = false;
     if (SDL_WasInit(SDL_SUBSYTEM_MASK)) {
         SDL_GetDesktopDisplayMode(0, &m_parent);
-        setTitleRect(m_parent.w, m_parent.h/32, 0, 0);
+        m_pitch = m_parent.w/512;
+        setTitleRect(m_width, m_parent.h/32, 0, 0);
+        setQuitRect(m_title.h/2 + m_title.h/8, m_title.h/2 + m_title.h/8, m_width - (m_title.h/2 + m_title.h/8) - (m_title.h - (m_title.h/2 + m_title.h/8))/2, (m_title.h - (m_title.h/2 + m_title.h/8))/2);
         m_window = SDL_CreateWindow(m_name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_width, m_height, SDL_WINDOW_SHOWN | SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
         m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -61,6 +64,17 @@ SDL_Rect* Screen::getTitleRect() {
     return &m_title;
 }
 
+void Screen::setQuitRect(int width, int height, int posX, int posY) {
+    m_quit.w = width;
+    m_quit.h = height;
+    m_quit.x = posX;
+    m_quit.y = posY;
+}
+
+SDL_Rect* Screen::getQuitRect() {
+    return &m_quit;
+}
+
 void Screen::setName(const char* name) {
     m_name = name;
 }
@@ -75,31 +89,61 @@ int Screen::getWindowId() {
 
 void Screen::updateRenderer() {
     SDL_RenderClear(m_renderer);
-    SDL_UpdateTexture(m_textureBack, NULL, m_surfaceBack->pixels, m_surfaceBack->pitch);
-    SDL_RenderCopy(m_renderer, m_textureBack, NULL, NULL);
-    SDL_RenderCopy(m_renderer, m_textureName, NULL, &m_rectName);
+
     for (int it = 0; it < m_widget.size(); it++) {
         m_widget[it]->drawDisplay();
     }
+
+    SDL_UpdateTexture(m_textureBack, NULL, m_surfaceBack->pixels, m_surfaceBack->pitch);
+    SDL_RenderCopy(m_renderer, m_textureBack, NULL, NULL);
+    SDL_RenderCopy(m_renderer, m_textureQuit, NULL, &m_rectQuit);
+    SDL_RenderCopy(m_renderer, m_textureName, NULL, &m_rectName);
+
     SDL_RenderPresent(m_renderer);
 }
 
 void Screen::updateDisplay() {
     SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(m_renderer, 40, 40, 40, 255);
     SDL_RenderClear(m_renderer);
 
-//    SDL_FreeSurface(m_background);
-//    m_background = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
     SDL_FillRect(m_surfaceBack, NULL, SDL_MapRGBA(m_surfaceBack->format, 0, 0, 0, 0));
-    //SDL_SetSurfaceBlendMode(m_background, SDL_BLENDMODE_NONE);
-    //SDL_SetTextureBlendMode(m_textureBack, SDL_BLENDMODE_NONE);
-    SDL_FillRect(m_surfaceBack, NULL, SDL_MapRGBA(m_surfaceBack->format, 255, 255, 255, 0));
+
+    Uint8 value = 0;
+    SDL_Rect m_shader;
+    for (int i = m_pitch; i >= 0; i--) {
+        m_shader.w = m_title.w;
+        m_shader.h = i;
+        m_shader.x = 0;
+        m_shader.y = m_title.h;
+        value += 120/m_pitch;
+        SDL_FillRect(m_surfaceBack, &m_shader, SDL_MapRGBA(m_surfaceBack->format, 40, 40, 40, value));
+    }
+    std::cout << "---- " << getName() << ": Pitch =  " << m_pitch << std::endl;
+
+//    m_shader.w = m_title.w;
+//    m_shader.h = 10;
+//    m_shader.x = 0;
+//    m_shader.y = m_title.h;
+//    SDL_FillRect(m_surfaceBack, &m_shader, SDL_MapRGBA(m_surfaceBack->format, 255, 0, 0, 255));
+
     SDL_FillRect(m_surfaceBack, &m_title, SDL_MapRGBA(m_surfaceBack->format, 255, 255, 255, 255));
+    if (m_quitButton)
+        SDL_FillRect(m_surfaceBack, &m_quit, SDL_MapRGBA(m_surfaceBack->format, 255, 0, 0, 255));
+
+    m_rectQuit.w = m_quit.w/2;
+    m_rectQuit.h = m_quit.h/2;
+    m_rectQuit.x = m_quit.x + m_quit.w/2 - m_rectQuit.w/2;
+    m_rectQuit.y = m_quit.y + m_quit.h/2 - m_rectQuit.h/2;
+    m_surfaceQuit = SDL_LoadBMP("../../resources/icon/close.bmp");
+    SDL_SetColorKey(m_surfaceQuit, SDL_TRUE, SDL_MapRGBA(m_surfaceQuit->format, 255, 255, 255, 0));
+    m_textureQuit = SDL_CreateTextureFromSurface(m_renderer, m_surfaceQuit);
+
     drawDisplay();
     for (int it = 0; it < m_widget.size(); it++) {
         m_widget[it]->updateDisplay();
     }
+
     updateRenderer();
 }
 
@@ -147,6 +191,10 @@ void Screen::drawDisplay() {
     TTF_CloseFont(roboto);
 }
 
+void Screen::isOnQuit(int x, int y) {
+    m_quitButton = (x >= m_quit.x) && (x <= m_quit.x + m_quit.w) && (y >= m_quit.y) && (y <= m_quit.y + m_quit.h);
+}
+
 void Screen::callBackEvent(Widget *widget) {
 //    std::cout << "Widget: " << widget->getName() << " | Error code: " << widget->getErrorCode() << std::endl;
     switch(widget->getCallBackCode()){
@@ -165,9 +213,10 @@ void Screen::callBackEvent(Widget *widget) {
 
 void Screen::computeEvent(SDL_Event event) {
     if (event.window.windowID == getWindowId()) {
+        isOnQuit(event.button.x, event.button.y);
         Widget* widget;
         int indice = 0, cpt = 0;
-        for (int it = 0; it < m_widget.size(); it++)
+        for (int it = 0; it < m_widget.size(); it++) {
             if (m_widget[it]->getFocus(event.button.x, event.button.y)) {
                 if (cpt == 0) {
                     widget = m_widget[it];
@@ -178,12 +227,20 @@ void Screen::computeEvent(SDL_Event event) {
                 }
                 cpt++;
             }
+        }
 
         if (cpt > 0) {
             widget->eventWatch(event);
             callBackEvent(widget);
             m_widget.erase(m_widget.begin() + indice);
             m_widget.push_back(widget);
+        }
+
+        if ((event.button.button == SDL_BUTTON_LEFT) && (event.button.state == SDL_PRESSED) && m_quitButton) {
+            SDL_Event sdl_event;
+            sdl_event.type = SDL_KEYDOWN;
+            sdl_event.key.keysym.sym = SDLK_ESCAPE;
+            SDL_PushEvent(&sdl_event);
         }
     }
 }

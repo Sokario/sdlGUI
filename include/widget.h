@@ -55,6 +55,7 @@ public:
     void updateWidget();
 
     bool isMoving();
+    void isOnQuit(int x, int y);
     void setCallBackCode(int error);
     int getCallBackCode();
     bool getFocus(int x, int y);
@@ -87,6 +88,11 @@ private:
     SDL_Surface* m_surfaceName;
     SDL_Texture* m_textureName;
     SDL_Rect m_rectName;
+
+    SDL_Surface* m_surfaceQuit;
+    SDL_Texture* m_textureQuit;
+    SDL_Rect m_rectQuit;
+    bool m_quitButton;
 };
 
 #endif //SDLGUI_WIDGET_H
