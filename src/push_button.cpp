@@ -16,6 +16,8 @@ PushButton::PushButton(SDL_DisplayMode* computer, SDL_Window *window, SDL_Render
     setHeight(getDisplayMode()->h/64);
 }
 
+
+
 PushButton::~PushButton() {
 
 }

@@ -12,6 +12,7 @@ class PushButton :public Button {
 public:
     PushButton();
     PushButton(SDL_DisplayMode* computer, SDL_Window* window, SDL_Renderer* renderer, const char* name);
+
     ~PushButton();
 
 private:

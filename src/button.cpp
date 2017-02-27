@@ -17,7 +17,7 @@ Button::Button(SDL_DisplayMode* computer, SDL_Window* window, SDL_Renderer* rend
     assignWindow(window);
     assignRenderer(renderer);
     setName(name);
-    setHeight(m_computer->h/64);
+    setHeight(0);
 }
 
 void Button::assignDisplayMode(SDL_DisplayMode* computer) {

@@ -81,8 +81,12 @@ void Section::delPushButton() {
 }
 
 void Section::drawDisplay(SDL_Surface *background) {
-    updateSection();
+    updateDisplay();
     SDL_FillRect(background, &m_section, SDL_MapRGBA(background->format, 255, 255, 255, 255));
+}
+
+void Section::updateDisplay() {
+    updateSection();
 }
 
 void Section::drawSection() {
