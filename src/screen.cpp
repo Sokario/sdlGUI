@@ -194,6 +194,10 @@ void Screen::drawDisplay() {
     TTF_CloseFont(roboto);
 }
 
+SDL_Renderer* Screen::getRenderer() {
+    return m_renderer;
+}
+
 void Screen::isOnQuit(int x, int y) {
     m_quitButton = (x >= m_quit.x) && (x <= m_quit.x + m_quit.w) && (y >= m_quit.y) && (y <= m_quit.y + m_quit.h);
 }

@@ -61,6 +61,7 @@ int main() {
 //    SDL_SetEventFilter(filterEvent, NULL);
 
     int cpt = 0;
+    bool sshot = true;
     while (!done) {
         while (SDL_PollEvent(&event)) {
 
@@ -74,6 +75,16 @@ int main() {
         }
         //std::cout << "Ittération: " << cpt++ << std::endl;
         window.updateDisplay();
+
+        if (sshot && (SDL_GetTicks() >= 1024)) {
+            std::cout << "ScreenShot!" << std::endl;
+            SDL_Surface* screenshot = SDL_CreateRGBSurface(0, current.w, current.h, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+            SDL_RenderReadPixels(window.getRenderer(), NULL, SDL_PIXELFORMAT_RGBA8888, screenshot->pixels, screenshot->pitch);
+            SDL_SaveBMP(screenshot, "../../resources/screenshot_test.bmp");
+            SDL_FreeSurface(screenshot);
+            sshot = false;
+        }
+
         SDL_Delay(1);
     }
     SDL_Quit();

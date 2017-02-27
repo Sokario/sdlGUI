@@ -31,6 +31,8 @@ public:
     void updateRenderer();
     void updateDisplay();
 
+    SDL_Renderer* getRenderer();
+
     void isOnQuit(int x, int y);
     void callBackEvent(Widget* widget);
     void computeEvent(SDL_Event event);
