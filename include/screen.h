@@ -59,7 +59,7 @@ private:
     SDL_Texture* m_textureName;
     SDL_Rect m_rectName;
 
-    SDL_DisplayMode m_parent;
+    SDL_DisplayMode* m_computer;
 
     SDL_Surface* m_surfaceQuit;
     SDL_Texture* m_textureQuit;

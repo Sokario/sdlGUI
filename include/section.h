@@ -7,11 +7,12 @@
 #include <unordered_map>
 #include "GUI_header.h"
 #include "button.h"
+#include "push_button.h"
 
 class Section {
 
 public:
-    Section(SDL_DisplayMode computer, SDL_Renderer* renderer, SDL_Rect* section, const char* name, int id);
+    Section(SDL_DisplayMode* computer, SDL_Renderer* renderer, SDL_Rect* section, const char* name, int id);
     void setName(const char* name);
     const char* getName();
     void setId(int id);
@@ -24,6 +25,8 @@ public:
     SDL_Rect* getSectionRect();
     Button* addButton(const char* name);
     void delButton();
+    PushButton* addPushButton(const char* name);
+    void delPushButton();
 
     void drawDisplay(SDL_Surface* background);
     void drawSection();
@@ -41,7 +44,7 @@ private:
     int m_offsetWindow;
     int m_offsetSection;
     SDL_Rect m_section;
-    SDL_DisplayMode m_computer;
+    SDL_DisplayMode* m_computer;
 
     SDL_Texture* m_sectionTitle;
     SDL_Texture* m_sectionName;

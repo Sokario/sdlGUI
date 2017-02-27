@@ -4,28 +4,28 @@
 #include "../include/button.h"
 
 Button::Button() {
-    m_parent = NULL;
+    m_computer = NULL;
     m_window = NULL;
     m_renderer = NULL;
     setName("NULL");
     setHeight(0);
 }
 
-Button::Button(SDL_DisplayMode parent, SDL_Window* window, SDL_Renderer* renderer, const char *name) {
+Button::Button(SDL_DisplayMode* computer, SDL_Window* window, SDL_Renderer* renderer, const char *name) {
     Button();
-    assignParent(parent);
+    assignParent(computer);
     assignWindow(window);
     assignRenderer(renderer);
     setName(name);
-    setHeight(m_parent.h/64);
+    setHeight(m_computer->h/64);
 }
 
-void Button::assignParent(SDL_DisplayMode parent) {
-    m_parent = parent;
+void Button::assignParent(SDL_DisplayMode* computer) {
+    m_computer = computer;
 }
 
-SDL_DisplayMode Button::getParent() {
-    return m_parent;
+SDL_DisplayMode* Button::getParent() {
+    return m_computer;
 }
 
 void Button::assignWindow(SDL_Window* window) {

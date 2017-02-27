@@ -4,7 +4,7 @@
 #include "../include/section.h"
 #include <iostream>
 
-Section::Section(SDL_DisplayMode computer, SDL_Renderer* renderer, SDL_Rect* section, const char* name, int id) {
+Section::Section(SDL_DisplayMode* computer, SDL_Renderer* renderer, SDL_Rect* section, const char* name, int id) {
     m_computer = computer;
     m_renderer = renderer;
     m_offsetWindow = section->y + section->h;
@@ -61,13 +61,22 @@ SDL_Rect* Section::getSectionRect() {
 }
 
 Button* Section::addButton(const char* name) {
-    int height = 0;
     Button* button = new Button(m_computer, m_window, m_renderer, name);
     m_button.emplace((int) m_button.size(), button);
     return button;
 }
 
 void Section::delButton() {
+
+}
+
+PushButton* Section::addPushButton(const char* name) {
+    PushButton* button = new PushButton(m_computer, m_window, m_renderer, name);
+    m_button.emplace((int) m_button.size(), button);
+    return button;
+}
+
+void Section::delPushButton() {
 
 }
 
@@ -80,7 +89,7 @@ void Section::drawSection() {
 
     updateSection();
     SDL_Surface* windowSurface;
-    windowSurface = SDL_CreateRGBSurface(0, m_computer.w, m_computer.h, 32, 0, 0, 0, 0);
+    windowSurface = SDL_CreateRGBSurface(0, m_computer->w, m_computer->h, 32, 0, 0, 0, 0);
     SDL_FillRect(windowSurface, &m_section, SDL_MapRGBA(windowSurface->format, 20, 80, 160, 255));
     m_sectionTitle = SDL_CreateTextureFromSurface(m_renderer, windowSurface);
 

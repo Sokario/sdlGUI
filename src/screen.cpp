@@ -10,10 +10,11 @@ Screen::Screen(const char* name, int width, int height) {
     setHeight(height);
     setName(name);
     m_quitButton = false;
+    m_computer = new SDL_DisplayMode;
     if (SDL_WasInit(SDL_SUBSYTEM_MASK)) {
-        SDL_GetDesktopDisplayMode(0, &m_parent);
-        m_pitch = m_parent.w/512;
-        setTitleRect(m_width, m_parent.h/32, 0, 0);
+        SDL_GetDesktopDisplayMode(0, m_computer);
+        m_pitch = m_computer->w/512;
+        setTitleRect(m_width, m_computer->h/32, 0, 0);
         setQuitRect(m_title.h/2 + m_title.h/8, m_title.h/2 + m_title.h/8, m_width - (m_title.h/2 + m_title.h/8) - (m_title.h - (m_title.h/2 + m_title.h/8))/2, (m_title.h - (m_title.h/2 + m_title.h/8))/2);
         m_window = SDL_CreateWindow(m_name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_width, m_height, SDL_WINDOW_SHOWN | SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL);
         m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -265,7 +266,7 @@ Widget* Screen::addWidget(const char* name, int posX, int posY) {
     int w = 0, h = 0, x = 0, y = 0;
     SDL_GetWindowSize(m_window, &w, &h);
     SDL_GetWindowPosition(m_window, &x, &y);
-    Widget* widget = new Widget(name, m_parent, m_renderer, x + w/2 - (m_width/4 - m_width/16)/2 + posX, y + h/2 - m_height/16 + posY, (int) m_widget.size());
+    Widget* widget = new Widget(name, m_computer, m_renderer, x + w/2 - (m_width/4 - m_width/16)/2 + posX, y + h/2 - m_height/16 + posY, (int) m_widget.size());
     m_widget.push_back(widget);
 
     return widget;

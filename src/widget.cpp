@@ -4,13 +4,13 @@
 #include "../include/widget.h"
 #include <iostream>
 
-Widget::Widget(const char* name, SDL_DisplayMode computer, SDL_Renderer* renderer, int posX, int posY, int id) {
+Widget::Widget(const char* name, SDL_DisplayMode* computer, SDL_Renderer* renderer, int posX, int posY, int id) {
     m_computer = computer;
     m_renderer = renderer;
-    m_pitch = m_computer.w/512;
+    m_pitch = m_computer->w/512;
     m_quitButton = false;
-    setWidth(m_computer.w/4 - m_computer.w/16);
-    setHeight(m_computer.h/64 + m_computer.h/128);
+    setWidth(m_computer->w/4 - m_computer->w/16);
+    setHeight(m_computer->h/64 + m_computer->h/128);
     setPosX(posX);
     setPosY(posY);
     setMouseX(posX);

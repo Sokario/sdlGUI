@@ -47,7 +47,7 @@ int main() {
     section1_3->addButton("Button 2");
     section1_3->addButton("Button 3");
     section1_3->addButton("Button 4");
-    section1_3->addButton("Button 5");
+    section1_3->addPushButton("Button 5");
 
     Widget* widget2 = window.addWidget("Widget 2", window.getWidth()/4, window.getHeight()/4);
 

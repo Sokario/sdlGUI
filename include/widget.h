@@ -12,7 +12,7 @@
 class Widget {
 
 public:
-    Widget(const char* name, SDL_DisplayMode computer, SDL_Renderer* renderer, int posX, int posY, int id);
+    Widget(const char* name, SDL_DisplayMode* computer, SDL_Renderer* renderer, int posX, int posY, int id);
     void setWidth(int width);
     int getWidth();
     void setHeight(int height);
@@ -75,7 +75,7 @@ private:
     const char* m_name;
     bool m_moving;
     std::unordered_map <int, Section*> m_section;
-    SDL_DisplayMode m_computer;
+    SDL_DisplayMode* m_computer;
     int m_id;
     int m_callback;
     bool m_widgetChanged;
