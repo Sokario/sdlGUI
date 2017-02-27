@@ -10,7 +10,7 @@ find_package(GLEW REQUIRED)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 14)
 
-set(SOURCE_FILES src/screen.cpp include/screen.h include/GUI_header.h src/widget.cpp include/widget.h include/sdlGUI.h src/section.cpp include/section.h src/button.cpp include/button.h)
+set(SOURCE_FILES src/screen.cpp include/screen.h include/GUI_header.h src/widget.cpp include/widget.h include/sdlGUI.h src/section.cpp include/section.h src/button.cpp include/button.h src/push_button.cpp include/push_button.h)
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${SDL2TTF_INCLUDE_DIRS})
 include_directories(${OpenGL_INCLUDE_DIRS})

@@ -4,13 +4,21 @@
 #ifndef SDLGUI_BUTTON_H
 #define SDLGUI_BUTTON_H
 
-#include <unordered_map>
 #include "GUI_header.h"
 
 class Button {
 
 public:
+    Button();
     Button(SDL_DisplayMode parent, SDL_Window* window, SDL_Renderer* renderer, const char* name);
+
+    void assignParent(SDL_DisplayMode parent);
+    SDL_DisplayMode getParent();
+    void assignWindow(SDL_Window* window);
+    SDL_Window* getWindow();
+    void assignRenderer(SDL_Renderer* renderer);
+    SDL_Renderer* getRenderer();
+
     void setName(const char* name);
     const char* getName();
     void setHeight(int height);
