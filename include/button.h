@@ -12,8 +12,8 @@ public:
     Button();
     Button(SDL_DisplayMode* computer, SDL_Window* window, SDL_Renderer* renderer, const char* name);
 
-    void assignParent(SDL_DisplayMode* parent);
-    SDL_DisplayMode* getParent();
+    void assignDisplayMode(SDL_DisplayMode* parent);
+    SDL_DisplayMode* getDisplayMode();
     void assignWindow(SDL_Window* window);
     SDL_Window* getWindow();
     void assignRenderer(SDL_Renderer* renderer);

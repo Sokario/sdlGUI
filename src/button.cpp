@@ -13,18 +13,18 @@ Button::Button() {
 
 Button::Button(SDL_DisplayMode* computer, SDL_Window* window, SDL_Renderer* renderer, const char *name) {
     Button();
-    assignParent(computer);
+    assignDisplayMode(computer);
     assignWindow(window);
     assignRenderer(renderer);
     setName(name);
     setHeight(m_computer->h/64);
 }
 
-void Button::assignParent(SDL_DisplayMode* computer) {
+void Button::assignDisplayMode(SDL_DisplayMode* computer) {
     m_computer = computer;
 }
 
-SDL_DisplayMode* Button::getParent() {
+SDL_DisplayMode* Button::getDisplayMode() {
     return m_computer;
 }
 
