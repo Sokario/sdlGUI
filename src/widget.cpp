@@ -246,7 +246,7 @@ void Widget::updateDisplay() {
     m_rectQuit.y = m_widget.y + m_quit.y + m_quit.h/2 - m_rectQuit.h/2;
     SDL_FreeSurface(m_surfaceQuit);
     m_surfaceQuit = SDL_LoadBMP("../../resources/icon/close.bmp");
-    SDL_SetColorKey(m_surfaceQuit, SDL_TRUE, SDL_MapRGBA(m_surfaceQuit->format, 255, 255, 255, 0));
+    SDL_SetColorKey(m_surfaceQuit, SDL_TRUE, SDL_MapRGBA(m_surfaceQuit->format, 0, 255, 0, 0));
     SDL_DestroyTexture(m_textureQuit);
     m_textureQuit = SDL_CreateTextureFromSurface(m_renderer, m_surfaceQuit);
 

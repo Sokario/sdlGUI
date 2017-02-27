@@ -118,27 +118,36 @@ void Screen::updateDisplay() {
         m_shader.h = i;
         m_shader.x = 0;
         m_shader.y = m_title.h;
-        value += 120/m_pitch;
+        value += 120 / m_pitch;
         SDL_FillRect(m_surfaceBack, &m_shader, SDL_MapRGBA(m_surfaceBack->format, 40, 40, 40, value));
     }
-
-//    m_shader.w = m_title.w;
-//    m_shader.h = 10;
-//    m_shader.x = 0;
-//    m_shader.y = m_title.h;
-//    SDL_FillRect(m_surfaceBack, &m_shader, SDL_MapRGBA(m_surfaceBack->format, 255, 0, 0, 255));
 
     SDL_FillRect(m_surfaceBack, &m_title, SDL_MapRGBA(m_surfaceBack->format, 255, 255, 255, 255));
     if (m_quitButton)
         SDL_FillRect(m_surfaceBack, &m_quit, SDL_MapRGBA(m_surfaceBack->format, 255, 0, 0, 255));
 
-    m_rectQuit.w = m_quit.w/2;
-    m_rectQuit.h = m_quit.h/2;
-    m_rectQuit.x = m_quit.x + m_quit.w/2 - m_rectQuit.w/2;
-    m_rectQuit.y = m_quit.y + m_quit.h/2 - m_rectQuit.h/2;
+    m_rectQuit.w = m_quit.w / 2;
+    m_rectQuit.h = m_quit.h / 2;
+    m_rectQuit.x = m_quit.x + m_quit.w / 2 - m_rectQuit.w / 2;
+    m_rectQuit.y = m_quit.y + m_quit.h / 2 - m_rectQuit.h / 2;
     SDL_FreeSurface(m_surfaceQuit);
     m_surfaceQuit = SDL_LoadBMP("../../resources/icon/close.bmp");
-    SDL_SetColorKey(m_surfaceQuit, SDL_TRUE, SDL_MapRGBA(m_surfaceQuit->format, 255, 255, 255, 0));
+    SDL_SetColorKey(m_surfaceQuit, SDL_TRUE, SDL_MapRGBA(m_surfaceQuit->format, 0, 255, 0, 0));
+
+    if (m_quitButton) {
+        for (int x = 0; x < m_surfaceQuit->w; x++) {
+            for (int y = 0; y < m_surfaceQuit->h; y++) {
+                Uint8* target = (Uint8*) m_surfaceQuit->pixels + y*m_surfaceQuit->pitch + x*m_surfaceQuit->format->BytesPerPixel;
+                Uint32* pixel = (Uint32*) target;
+                Uint8 r, g, b;
+                SDL_GetRGB(*pixel, m_surfaceQuit->format, &r, &g, &b);
+                if ((r <= 0 ) && (g <= 0 ) && (b <= 0 )) {
+                    *pixel = SDL_MapRGBA(m_surfaceQuit->format, 255, 255, 255, 255);
+                }
+            }
+        }
+    }
+
     SDL_DestroyTexture(m_textureQuit);
     m_textureQuit = SDL_CreateTextureFromSurface(m_renderer, m_surfaceQuit);
 
