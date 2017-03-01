@@ -10,27 +10,29 @@ class Button {
 
 public:
     Button();
-    Button(SDL_DisplayMode* computer, SDL_Window* window, SDL_Renderer* renderer, const char* name);
+    Button(SDL_DisplayMode* computer, SDL_Renderer* renderer, const char* name);
 
-    void assignDisplayMode(SDL_DisplayMode* parent);
+    void assignDisplayMode(SDL_DisplayMode* computer);
     SDL_DisplayMode* getDisplayMode();
-    void assignWindow(SDL_Window* window);
-    SDL_Window* getWindow();
     void assignRenderer(SDL_Renderer* renderer);
     SDL_Renderer* getRenderer();
 
-    void setName(const char* name);
-    const char* getName();
+    void setWidth(int width);
+    int getWidth();
     void setHeight(int height);
     int getHeight();
+    void setName(const char* name);
+    const char* getName();
+
     ~Button();
 
 private:
-    SDL_Window* m_window;
-    SDL_Renderer* m_renderer;
-    const char* m_name;
-    int m_height;
     SDL_DisplayMode* m_computer;
+    SDL_Renderer* m_renderer;
+
+    int m_width;
+    int m_height;
+    const char* m_name;
 };
 
 #endif //SDLGUI_BUTTON_H

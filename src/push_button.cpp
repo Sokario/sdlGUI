@@ -7,13 +7,13 @@ PushButton::PushButton() {
     Button();
 }
 
-PushButton::PushButton(SDL_DisplayMode* computer, SDL_Window *window, SDL_Renderer *renderer, const char *name) {
+PushButton::PushButton(SDL_DisplayMode* computer, SDL_Renderer *renderer, const char *name) {
     PushButton();
     assignDisplayMode(computer);
-    assignWindow(window);
     assignRenderer(renderer);
-    setName(name);
+    setWidth(20);
     setHeight(getDisplayMode()->h/64);
+    setName(name);
 }
 
 

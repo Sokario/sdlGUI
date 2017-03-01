@@ -5,8 +5,8 @@
 #include <iostream>
 
 Widget::Widget(const char* name, SDL_DisplayMode* computer, SDL_Renderer* renderer, int posX, int posY, int id) {
-    m_computer = computer;
-    m_renderer = renderer;
+    assignDisplayMode(computer);
+    assignRenderer(renderer);
     m_pitch = m_computer->w/512;
     m_quitButton = false;
     setWidth(m_computer->w/4 - m_computer->w/16);
@@ -17,7 +17,6 @@ Widget::Widget(const char* name, SDL_DisplayMode* computer, SDL_Renderer* render
     setMouseY(posY);
     setName(name);
     m_moving = false;
-    m_widgetChanged = true;
     setWidgetRect(m_width + 2*m_pitch, m_height + 2*m_pitch, m_posX - m_pitch, m_posY - m_pitch);
     setTitleRect(m_width, m_height, m_pitch, m_pitch);
     setQuitRect(m_height/2 + m_height/8, m_height/2 + m_height/8, m_pitch + m_width - m_height/2 - m_height/8 - (m_height - (m_height/2 + m_height/8))/2, m_pitch + (m_height - (m_height/2 + m_height/8))/2);
@@ -29,6 +28,40 @@ Widget::Widget(const char* name, SDL_DisplayMode* computer, SDL_Renderer* render
     m_textureQuit = SDL_CreateTextureFromSurface(m_renderer, m_surfaceQuit);
     m_surfaceName = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0, 0, 0, 0);
     m_textureName = SDL_CreateTextureFromSurface(m_renderer, m_surfaceName);
+}
+
+void Widget::assignDisplayMode(SDL_DisplayMode* computer) {
+    m_computer = computer;
+}
+
+SDL_DisplayMode* Widget::getDisplayMode() {
+    return m_computer;
+}
+
+void Widget::assignRenderer(SDL_Renderer* renderer) {
+    m_renderer = renderer;
+}
+
+SDL_Renderer* Widget::getRenderer() {
+    return m_renderer;
+}
+
+void Widget::setId(int id) {
+    m_id = id;
+}
+
+int Widget::getId() {
+    return m_id;
+}
+
+Section* Widget::addSection(const char *name) {
+    Section* section = new Section(m_computer, m_renderer, &m_title, name, (int) m_section.size());
+    m_section.emplace(section->getId(), section);
+    return section;
+}
+
+bool Widget::delSection(Section *section) {
+
 }
 
 void Widget::setWidth(int width) {
@@ -45,6 +78,22 @@ void Widget::setHeight(int height) {
 
 int Widget::getHeight() {
     return m_height;
+}
+
+void Widget::setName(const char* name) {
+    m_name = name;
+}
+
+const char* Widget::getName() {
+    return m_name;
+}
+
+void Widget::setPitch(int pitch) {
+    m_pitch = pitch;
+}
+
+int Widget::getPitch() {
+    return m_pitch;
 }
 
 void Widget::setPosX(int posX) {
@@ -79,6 +128,41 @@ int Widget::getMouseY() {
     return m_mouseY;
 }
 
+void Widget::setMoving(bool moving) {
+    m_moving = moving;
+}
+
+bool Widget::getMoving() {
+    return m_moving;
+}
+
+void Widget::setQuitButton(int x, int y) {
+    m_quitButton = (x >= m_quit.x) && (x <= m_quit.x + m_quit.w) && (y >= m_quit.y) && (y <= m_quit.y + m_quit.h);
+}
+
+bool Widget::getQuitButton() {
+    return m_quitButton;
+}
+
+void Widget::setCallBackCode(int error) {
+    m_callback = error;
+}
+
+int Widget::getCallBackCode() {
+    return m_callback;
+}
+
+void Widget::setWidgetRect(int width, int height, int posX, int posY) {
+    m_widget.w = width;
+    m_widget.h = height;
+    m_widget.x = posX;
+    m_widget.y = posY;
+}
+
+SDL_Rect* Widget::getWidgetRect() {
+    return &m_widget;
+}
+
 void Widget::setTitleRect(int width, int height, int posX, int posY) {
     m_title.w = width;
     m_title.h = height;
@@ -99,53 +183,6 @@ void Widget::setQuitRect(int width, int height, int posX, int posY) {
 
 SDL_Rect* Widget::getQuitRect() {
     return &m_quit;
-}
-
-void Widget::setWidgetRect(int width, int height, int posX, int posY) {
-    m_widget.w = width;
-    m_widget.h = height;
-    m_widget.x = posX;
-    m_widget.y = posY;
-}
-
-SDL_Rect* Widget::getWidgetRect() {
-    return &m_widget;
-}
-
-void Widget::setName(const char* name) {
-    m_name = name;
-}
-
-const char* Widget::getName() {
-    return m_name;
-}
-
-void Widget::setId(int id) {
-    m_id = id;
-}
-
-int Widget::getId() {
-    return m_id;
-}
-
-Widget::~Widget() {}
-
-Section* Widget::addSection(const char *name) {
-    Section* section = new Section(m_computer, m_renderer, &m_title, name, (int) m_section.size());
-    m_section.emplace(section->getId(), section);
-    m_widgetChanged = true;
-    return section;
-}
-
-void Widget::updateWidgetPosition(int moveX, int moveY) {
-    //std::cout << "Delta X: " << moveX - m_mouseX << " | Delta Y: " << moveY - m_mouseY << std::endl;
-    int x = moveX - m_mouseX, y = moveY - m_mouseY;
-
-    setPosX(m_posX + x);
-    setPosY(m_posY + y);
-    setMouseX(moveX);
-    setMouseY(moveY);
-    setWidgetRect(m_widget.w, m_widget.h, m_posX, m_posY);
 }
 
 void Widget::drawDisplay() {
@@ -204,54 +241,44 @@ void Widget::updateDisplay() {
     TTF_CloseFont(roboto);
 }
 
-/*void Widget::clearWidget() {
-    SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
-    setWidgetRect(m_width, m_height, m_widget.x, m_widget.y);
-    SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
-    SDL_RenderClear(m_renderer);
-    SDL_RenderPresent(m_renderer);
-}*/
-
 void Widget::updateWidget() {
     int height = m_title.h;
     std::cout << "---- " << getName() << ": Pitch =  " << m_pitch << std::endl;
     for (int it = 0; it < m_section.size(); it++) {
-        m_section[it]->updateSection();
+        m_section[it]->updateDisplay();
         height += m_section[it]->getHeight();
         std::cout << "------------- " << getName() << ": Section = " << m_section[it]->getId() << " on " << m_section.size() << " -> H = " << m_section[it]->getHeight() << std::endl;
         if (it == 0)
-            m_section[it]->setOffset(0);
+            m_section[it]->setOffsetSection(0);
         else
-            m_section[it]->setOffset(m_section[it-1]->getHeight() + m_section[it-1]->getOffset());
+            m_section[it]->setOffsetSection(m_section[it-1]->getHeight() + m_section[it-1]->getOffsetSection());
+        m_section[it]->updateSectionRect();
     }
     setHeight(height);
     m_widget.h = m_height + 2*m_pitch;
 }
 
-bool Widget::isMoving() {
-    return m_moving;
-}
-
-void Widget::isOnQuit(int x, int y) {
-    m_quitButton = (x >= m_quit.x) && (x <= m_quit.x + m_quit.w) && (y >= m_quit.y) && (y <= m_quit.y + m_quit.h);
-}
-
-void Widget::setCallBackCode(int error) {
-    m_callback = error;
-}
-
-int Widget::getCallBackCode() {
-    return m_callback;
-}
+Widget::~Widget() {}
 
 bool Widget::getFocus(int x, int y) {
     return (x >= m_widget.x) && (x <= m_widget.x + m_widget.w) && (y >= m_widget.y) && (y <= m_widget.y + m_widget.h);
 }
 
+void Widget::updateWidgetPosition(int moveX, int moveY) {
+    //std::cout << "Delta X: " << moveX - m_mouseX << " | Delta Y: " << moveY - m_mouseY << std::endl;
+    int x = moveX - m_mouseX, y = moveY - m_mouseY;
+
+    setPosX(m_posX + x);
+    setPosY(m_posY + y);
+    setMouseX(moveX);
+    setMouseY(moveY);
+    setWidgetRect(m_widget.w, m_widget.h, m_posX, m_posY);
+}
+
 void Widget::eventWatch(SDL_Event event) {
     int x = 0, y = 0;
     setCallBackCode(0);
-    isOnQuit(event.button.x - m_widget.x, event.button.y - m_widget.y);
+    setQuitButton(event.button.x - m_widget.x, event.button.y - m_widget.y);
     if (event.type == SDL_MOUSEBUTTONDOWN) {
         setMouseX(event.button.x);
         setMouseY(event.button.y);

@@ -5,19 +5,19 @@
 
 Button::Button() {
     m_computer = NULL;
-    m_window = NULL;
     m_renderer = NULL;
-    setName("NULL");
+    setWidth(0);
     setHeight(0);
+    setName("NULL");
 }
 
-Button::Button(SDL_DisplayMode* computer, SDL_Window* window, SDL_Renderer* renderer, const char *name) {
+Button::Button(SDL_DisplayMode* computer, SDL_Renderer* renderer, const char *name) {
     Button();
     assignDisplayMode(computer);
-    assignWindow(window);
     assignRenderer(renderer);
+    setWidth(20);
+    setHeight(10);
     setName(name);
-    setHeight(0);
 }
 
 void Button::assignDisplayMode(SDL_DisplayMode* computer) {
@@ -28,14 +28,6 @@ SDL_DisplayMode* Button::getDisplayMode() {
     return m_computer;
 }
 
-void Button::assignWindow(SDL_Window* window) {
-    m_window = window;
-}
-
-SDL_Window* Button::getWindow() {
-    return m_window;
-}
-
 void Button::assignRenderer(SDL_Renderer* renderer) {
     m_renderer = renderer;
 }
@@ -44,12 +36,12 @@ SDL_Renderer* Button::getRenderer() {
     return m_renderer;
 }
 
-void Button::setName(const char *name) {
-    m_name = name;
+void Button::setWidth(int width) {
+    m_width = width;
 }
 
-const char* Button::getName() {
-    return m_name;
+int Button::getWidth() {
+    return m_width;
 }
 
 void Button::setHeight(int height) {
@@ -58,6 +50,14 @@ void Button::setHeight(int height) {
 
 int Button::getHeight() {
     return m_height;
+}
+
+void Button::setName(const char *name) {
+    m_name = name;
+}
+
+const char* Button::getName() {
+    return m_name;
 }
 
 Button::~Button() {

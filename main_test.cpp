@@ -75,6 +75,7 @@ int main() {
         }
         //std::cout << "Ittération: " << cpt++ << std::endl;
         window.updateDisplay();
+        window.drawDisplay();
 
         if (sshot && (SDL_GetTicks() >= 1024)) {
             std::cout << "ScreenShot!" << std::endl;
