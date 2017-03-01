@@ -29,14 +29,6 @@ Widget::Widget(const char* name, SDL_DisplayMode* computer, SDL_Renderer* render
     m_textureQuit = SDL_CreateTextureFromSurface(m_renderer, m_surfaceQuit);
     m_surfaceName = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0, 0, 0, 0);
     m_textureName = SDL_CreateTextureFromSurface(m_renderer, m_surfaceName);
-/*    if (SDL_WasInit(SDL_SUBSYTEM_MASK)) {
-        m_window = SDL_CreateWindow(m_name, m_posX, m_posY, m_width, m_height, SDL_WINDOW_SHOWN | SDL_WINDOW_BORDERLESS);
-        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-        clearWidget();
-    } else {
-        SDL_Log("SDL was not initialize!");
-        exit(-1);
-    }*/
 }
 
 void Widget::setWidth(int width) {
@@ -144,68 +136,16 @@ Section* Widget::addSection(const char *name) {
     m_widgetChanged = true;
     return section;
 }
-/*
-bool Widget::delSection(Section *section) {
-    std::unordered_map<int, Section*> new_section;
-    for (int i = 0; i < m_section.size(); i++) {
-        if (i != section->getId()) {
-            m_section[i]->setId((int) new_section.size());
-            new_section.emplace(m_section[i]->getId(), m_section[i]);
-        }
-    }
-    m_section.swap(new_section);
-    section->~Section();
-    int height = (int) m_section.size() * 120;
-    setHeight(height);
-    SDL_SetWindowSize(m_window, m_width, m_height);
-    SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(m_renderer);
-    SDL_RenderPresent(m_renderer);
-    drawHeader();
-    return true;
-}
-
-void Widget::checkTitle(int x, int y) {
-    //std::cout << "Mouse X: " << x << " | Mouse Y: " << y << std::endl;
-    if ((x >= 0) && (x <= m_title.w) && (y >= 0) && (y <= m_title.h))
-        m_titleM = true;
-    else
-        m_titleM = false;
-    if ((x >= m_quit.x) && (x <= m_quit.x + m_quit.w) && (y >= m_quit.y) && (y <= m_quit.y + m_quit.h)) {
-        m_quitB = true;
-        //std::cout << "Mouse OK" << std::endl;
-    }
-    else
-        m_quitB = false;
-}*/
 
 void Widget::updateWidgetPosition(int moveX, int moveY) {
     //std::cout << "Delta X: " << moveX - m_mouseX << " | Delta Y: " << moveY - m_mouseY << std::endl;
     int x = moveX - m_mouseX, y = moveY - m_mouseY;
-//    int x = moveX, y = moveY;
 
     setPosX(m_posX + x);
     setPosY(m_posY + y);
     setMouseX(moveX);
     setMouseY(moveY);
-    //SDL_SetWindowPosition(m_window, m_posX, m_posY);
     setWidgetRect(m_widget.w, m_widget.h, m_posX, m_posY);
-    /*setTitleRect(m_title.w, m_title.h, m_posX, m_posY);
-    setQuitRect(m_quit.w, m_quit.h, m_quit.x + x, m_quit.y + y);
-    for (int it = 0; it < m_section.size(); it++) {
-        m_section[it]->updateSectionPosition(x, y);
-    }*/
-
-    //std::cout << "Move X: " << m_mouseX << " | Move Y: " << m_mouseY << std::endl;
-    //std::cout << "Mouse X: " << m_mouseX << " | Mouse Y: " << m_mouseY << std::endl;
-}
-
-void Widget::updateRenderer() {
-    SDL_RenderCopy(m_renderer, m_headerTitle, NULL, NULL);
-    SDL_RenderCopy(m_renderer, m_textureName, NULL, &m_rectName);
-    for (int it = 0; it < m_section.size(); it++) {
-        m_section[it]->updateRenderer();
-    }
 }
 
 void Widget::drawDisplay() {
@@ -263,23 +203,14 @@ void Widget::updateDisplay() {
     SDL_QueryTexture(m_textureName, NULL, NULL, &m_rectName.w, &m_rectName.h);
     TTF_CloseFont(roboto);
 }
-/*
-void Widget::clearWidget() {
+
+/*void Widget::clearWidget() {
     SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
     setWidgetRect(m_width, m_height, m_widget.x, m_widget.y);
     SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
     SDL_RenderClear(m_renderer);
     SDL_RenderPresent(m_renderer);
 }*/
-
-void Widget::drawWidget() {
-    if (m_widgetChanged) {
-        updateWidget();
-        m_widgetChanged = false;
-    }
-    for (int it = 0; it < m_section.size(); it++)
-        m_section[it]->drawSection();
-}
 
 void Widget::updateWidget() {
     int height = m_title.h;

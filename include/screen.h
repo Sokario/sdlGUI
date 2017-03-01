@@ -49,7 +49,6 @@ private:
 
     int m_width;
     int m_height;
-    bool m_escape;
     const char* m_name;
     int m_pitch;
 

@@ -3,7 +3,6 @@
 //
 #include <SDL_video.h>
 #include "../include/screen.h"
-#include "../include/sdlGUI.h"
 
 Screen::Screen(const char* name, int width, int height) {
     setWidth(width);
@@ -24,8 +23,6 @@ Screen::Screen(const char* name, int width, int height) {
         SDL_RenderClear(m_renderer);
         SDL_RenderPresent(m_renderer);
 
-        //m_surfaceBack = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
-        //m_textureBack = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, m_width, m_height);
         m_surfaceBack = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
         m_textureBack = SDL_CreateTextureFromSurface(m_renderer, m_surfaceBack);
         m_surfaceQuit = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
@@ -160,34 +157,6 @@ void Screen::updateDisplay() {
     updateRenderer();
 }
 
-/*
-void Screen::updateRenderer() {
-    SDL_DestroyTexture(m_textureBack);
-    m_textureBack = SDL_CreateTextureFromSurface(m_renderer, m_background);
-    SDL_RenderCopy(m_renderer, m_textureBack, NULL, NULL);
-    SDL_RenderCopy(m_renderer, m_textureName, NULL, &m_rectName);
-    for (int it = 0; it < m_widget.size(); it++) {
-        m_widget[it]->copyText();
-    }
-    SDL_RenderPresent(m_renderer);
-}
-
-void Screen::updateDisplay() {
-    SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
-    SDL_RenderClear(m_renderer);
-
-    SDL_FreeSurface(m_background);
-    m_background = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
-    SDL_FillRect(m_background, NULL, SDL_MapRGBA(m_background->format, 255, 255, 255, 255));
-    SDL_FillRect(m_background, &m_title, SDL_MapRGBA(m_background->format, 255, 255, 255, 255));
-    drawDisplay();
-    for (int it = 0; it < m_widget.size(); it++) {
-        m_widget[it]->drawDisplay(m_background);
-    }
-    updateRenderer();
-}*/
-
 void Screen::drawDisplay() {
     SDL_Color white = {0, 0, 0, 0};
     m_rectName.w = m_title.w/64;
@@ -271,8 +240,8 @@ Widget* Screen::addWidget(const char* name, int posX, int posY) {
 
     return widget;
 }
-/*
-bool Screen::delWidget(Widget *widget) {
+
+/*bool Screen::delWidget(Widget *widget) {
     std::unordered_map<int, Widget*>::const_iterator widget_it = m_widget.find(widget->getWindowId());
     widget->~Widget();
     m_widget.erase(widget_it);

@@ -38,20 +38,12 @@ public:
     int getId();
     ~Widget();
 
-    void hideWidget();
-    void showWidget();
     Section* addSection(const char* name);
     bool delSection(Section* section);
 
-    void checkTitle(int x, int y);
     void updateWidgetPosition(int x, int y);
-    void updateRenderer();
     void drawDisplay();
-    SDL_Surface* getSurfaceDisplay();
-    SDL_Texture* getTextureDisplay();
     void updateDisplay();
-    void clearWidget();
-    void drawWidget();
     void updateWidget();
 
     bool isMoving();

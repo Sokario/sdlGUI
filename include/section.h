@@ -30,11 +30,8 @@ public:
 
     void drawDisplay(SDL_Surface* background);
     void updateDisplay();
-    void drawSection();
-    void updateSectionPosition(int x, int y);
-    void updateRenderer();
-    void updateSection();
     ~Section();
+
 private:
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;
@@ -46,10 +43,6 @@ private:
     int m_offsetSection;
     SDL_Rect m_section;
     SDL_DisplayMode* m_computer;
-
-    SDL_Texture* m_sectionTitle;
-    SDL_Texture* m_sectionName;
-    SDL_Rect m_rectName;
 };
 
 #endif //SDLGUI_SECTION_H
