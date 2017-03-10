@@ -3,16 +3,33 @@
 //
 #include "../include/section.h"
 
-Section::Section(SDL_DisplayMode* computer, SDL_Renderer* renderer, SDL_Rect* section, const char* name, int id) {
-    m_computer = computer;
-    m_renderer = renderer;
-    m_offsetWindow = section->y + section->h;
-    setName(name);
-    setId(id);
-    setSectionRect(section);
+Section::Section() {
+    m_computer = new SDL_DisplayMode;
+    m_renderer = NULL;
+    setId(0);
+
+    setWidth(0);
+    setHeight(0);
+    setName("NULL");
+    setOffsetWindow(0);
     setOffsetSection(0);
+}
+
+Section::Section(SDL_DisplayMode* computer, SDL_Renderer* renderer, SDL_Rect* section, const char* name, int id) {
+    m_computer = new SDL_DisplayMode;
+    m_renderer = NULL;
+
+    assignDisplayMode(computer);
+    assignRenderer(renderer);
+    setId(id);
+
     setWidth(section->w);
     setHeight(0);
+    setName(name);
+    setOffsetWindow(section->y + section->h);
+    setOffsetSection(0);
+
+    setSectionRect(section);
 }
 
 void Section::assignDisplayMode(SDL_DisplayMode* computer) {

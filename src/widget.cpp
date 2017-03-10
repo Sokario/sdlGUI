@@ -4,23 +4,47 @@
 #include "../include/widget.h"
 #include <iostream>
 
+Widget::Widget() {
+    m_computer = new SDL_DisplayMode;
+    m_renderer = NULL;
+    setId(0);
+
+    setWidth(0);
+    setHeight(0);
+    setName("NULL");
+    setPitch(0);
+    setPosX(0);
+    setPosY(0);
+    setMouseX(0);
+    setMouseY(0);
+    setMoving(false);
+    m_quitButton = false;
+    setCallBackCode(0);
+}
+
 Widget::Widget(const char* name, SDL_DisplayMode* computer, SDL_Renderer* renderer, int posX, int posY, int id) {
+    m_computer = new SDL_DisplayMode;
+    m_renderer = NULL;
+
     assignDisplayMode(computer);
     assignRenderer(renderer);
-    m_pitch = m_computer->w/512;
-    m_quitButton = false;
+    setId(id);
+
     setWidth(m_computer->w/4 - m_computer->w/16);
     setHeight(m_computer->h/64 + m_computer->h/128);
+    setName(name);
+    setPitch(m_computer->w/512);
     setPosX(posX);
     setPosY(posY);
     setMouseX(posX);
     setMouseY(posY);
-    setName(name);
-    m_moving = false;
+    setMoving(false);
+    m_quitButton = false;
+    setCallBackCode(0);
+
     setWidgetRect(m_width + 2*m_pitch, m_height + 2*m_pitch, m_posX - m_pitch, m_posY - m_pitch);
     setTitleRect(m_width, m_height, m_pitch, m_pitch);
     setQuitRect(m_height/2 + m_height/8, m_height/2 + m_height/8, m_pitch + m_width - m_height/2 - m_height/8 - (m_height - (m_height/2 + m_height/8))/2, m_pitch + (m_height - (m_height/2 + m_height/8))/2);
-    setId(id);
 
     m_surfaceBack = SDL_CreateRGBSurface(0, m_width, m_height, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
     m_textureBack = SDL_CreateTextureFromSurface(m_renderer, m_surfaceBack);
@@ -207,7 +231,7 @@ void Widget::updateDisplay() {
     }
 
     SDL_FillRect(m_surfaceBack, &m_title, SDL_MapRGBA(m_surfaceBack->format, 20, 80, 160, 255));
-    if (m_quitButton)
+    if (getQuitButton())
         SDL_FillRect(m_surfaceBack, &m_quit, SDL_MapRGBA(m_surfaceBack->format, 255, 255, 255, 255));
 
     for (int it = 0; it < m_section.size(); it++) {
@@ -266,7 +290,7 @@ bool Widget::getFocus(int x, int y) {
 
 void Widget::updateWidgetPosition(int moveX, int moveY) {
     //std::cout << "Delta X: " << moveX - m_mouseX << " | Delta Y: " << moveY - m_mouseY << std::endl;
-    int x = moveX - m_mouseX, y = moveY - m_mouseY;
+    int x = moveX - getMouseX(), y = moveY - getMouseY();
 
     setPosX(m_posX + x);
     setPosY(m_posY + y);
@@ -276,21 +300,18 @@ void Widget::updateWidgetPosition(int moveX, int moveY) {
 }
 
 void Widget::eventWatch(SDL_Event event) {
-    int x = 0, y = 0;
     setCallBackCode(0);
     setQuitButton(event.button.x - m_widget.x, event.button.y - m_widget.y);
     if (event.type == SDL_MOUSEBUTTONDOWN) {
         setMouseX(event.button.x);
         setMouseY(event.button.y);
     } else if (event.type == SDL_MOUSEMOTION) {
-        x = event.motion.x;
-        y = event.motion.y;
         if (SDL_GetMouseState(0, 0) & SDL_BUTTON_LMASK) {
-            m_moving = true;
-            updateWidgetPosition(x, y);
+            setMoving(true);
+            updateWidgetPosition(event.motion.x, event.motion.y);
             setCallBackCode(1);
         } else {
-            m_moving = false;
+            setMoving(false);
         }
     }
     std::cout << getName() << std::endl;

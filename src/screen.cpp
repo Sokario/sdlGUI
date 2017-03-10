@@ -17,10 +17,16 @@ Screen::Screen() {
 }
 
 Screen::Screen(const char* name, int width, int height) {
-    Screen();
+    m_computer = new SDL_DisplayMode;
+    m_window = NULL;
+    m_renderer = NULL;
+
     setWidth(width);
     setHeight(height);
     setName(name);
+    setPitch(0);
+    m_quitButton = false;
+
     if (SDL_WasInit(SDL_SUBSYTEM_MASK)) {
         SDL_GetDesktopDisplayMode(0, m_computer);
         assignWindow(SDL_CreateWindow(m_name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_width, m_height, SDL_WINDOW_SHOWN | SDL_WINDOW_BORDERLESS | SDL_WINDOW_OPENGL));
@@ -167,8 +173,6 @@ void Screen::updateDisplay() {
     }
 
     SDL_FillRect(m_surfaceBack, &m_title, SDL_MapRGBA(m_surfaceBack->format, 255, 255, 255, 255));
-    if (getQuitButton())
-        SDL_FillRect(m_surfaceBack, &m_quit, SDL_MapRGBA(m_surfaceBack->format, 255, 0, 0, 255));
 
     m_rectQuit.w = m_quit.w / 2;
     m_rectQuit.h = m_quit.h / 2;
@@ -179,6 +183,7 @@ void Screen::updateDisplay() {
     SDL_SetColorKey(m_surfaceQuit, SDL_TRUE, SDL_MapRGBA(m_surfaceQuit->format, 0, 255, 0, 0));
 
     if (getQuitButton()) {
+        SDL_FillRect(m_surfaceBack, &m_quit, SDL_MapRGBA(m_surfaceBack->format, 255, 0, 0, 255));
         for (int x = 0; x < m_surfaceQuit->w; x++) {
             for (int y = 0; y < m_surfaceQuit->h; y++) {
                 Uint8* target = (Uint8*) m_surfaceQuit->pixels + y*m_surfaceQuit->pitch + x*m_surfaceQuit->format->BytesPerPixel;
